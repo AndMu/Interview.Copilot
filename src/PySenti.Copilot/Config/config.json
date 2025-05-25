@@ -1,0 +1,24 @@
+﻿{
+  "llmModels": [
+    {
+      "model": "gpt-4",
+      "vendor": "AzureOpenAi",
+      "apiKey": "your-api-key",
+      "endpoint": "https://your-endpoint.openai.azure.com/"
+    },
+    {
+      "model": "gpt-4-32k",
+      "vendor": "AzureOpenAi",
+      "apiKey": "your-api-key",
+      "endpoint": "https://your-endpoint.openai.azure.com/"
+    }
+  ],
+  "transcriptionModels": [
+    {
+      "model": "whisper-1",
+      "vendor": "AzureOpenAi",
+      "apiKey": "your-api-key",
+      "endpoint": "https://your-endpoint.openai.azure.com/"
+    }
+  ]
+}
