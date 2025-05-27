@@ -56,8 +56,7 @@ namespace PySenti.Copilot.App.ViewModels.Config
                     Role = "New Prompt Block",
                     Short = "Short description",
                     Long = "Long description"
-                };
-            ;
+                };            
         }
     }
 }
