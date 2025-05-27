@@ -1,0 +1,109 @@
+<UserControl x:Class="PySenti.Copilot.App.Views.Config.PromptEditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:PySenti.Copilot.App.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Prompt Blocks List -->
+        <ListView x:Name="PromptsGrid" 
+                  Grid.Row="0"
+                  ItemsSource="{Binding Items, Mode=OneWay}"
+                  SelectedItem="{Binding SelectedItem, Mode=TwoWay}"                  Margin="0,0,0,10"
+                  IsEnabled="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}"
+                  BorderThickness="1"
+                  BorderBrush="{StaticResource BorderBrush}">            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Role" Width="150">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Role}" Margin="5,0" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Short Prompt" Width="290">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Short}" Margin="5,0" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Long Prompt" Width="300">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Long}" Margin="5,0" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View><ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                    <Setter Property="Height" Value="28"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <!-- Prompts Buttons -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
+            <Button Content="Add" Command="{Binding AddCommand}" Width="80" Margin="0,0,5,0"/>
+            <Button Content="Edit" Command="{Binding EditCommand}" Width="80" Margin="0,0,5,0"/>
+            <Button Content="Remove" Command="{Binding RemoveCommand}" Width="80" Margin="0,0,5,0"/>
+        </StackPanel>        <!-- Prompt Edit Form -->
+        <Border Grid.Row="2"
+                BorderBrush="{StaticResource BorderBrush}" 
+                BorderThickness="1" 
+                Padding="10"
+                Margin="0,10,0,0"
+                Background="{StaticResource ControlBackgroundBrush}"
+                Visibility="{Binding IsEditing, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Name -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Role:" VerticalAlignment="Center" Margin="0,0,5,5"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding EditingItem.Role, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,5"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Short Text:" VerticalAlignment="Top" Margin="0,0,5,5"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding EditingItem.Short, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,5"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         Height="80"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Long Text:" VerticalAlignment="Top" Margin="0,0,5,5"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding EditingItem.Long, UpdateSourceTrigger=PropertyChanged}"
+                         Margin="0,0,0,5"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         Height="80"/>
+
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Update" Command="{Binding SaveCommand}" Width="80" Margin="0,0,5,0"/>
+                    <Button Content="Cancel" Command="{Binding CancelCommand}" Width="80"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

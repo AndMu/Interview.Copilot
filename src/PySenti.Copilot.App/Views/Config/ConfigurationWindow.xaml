@@ -1,0 +1,44 @@
+﻿<Window x:Class="PySenti.Copilot.App.Views.Config.ConfigurationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:PySenti.Copilot.App.Views"
+        xmlns:config="clr-namespace:PySenti.Copilot.App.Views.Config"
+        mc:Ignorable="d"
+        Title="Configuration" Height="600" Width="800"
+        ResizeMode="NoResize"
+        Background="{StaticResource PrimaryBackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>        <!-- Tab Control for LLM and Transcription Models -->
+        <TabControl Grid.Row="0" Grid.RowSpan="2" Margin="0,0,0,10" Padding="5,5,5,10"
+                    Background="{StaticResource PrimaryBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}">
+            <TabItem Header="LLM" Foreground="{StaticResource TextPrimaryBrush}">
+                <!-- Using the new LlmModelView -->
+                <views:LlmModelView DataContext="{Binding LLmViewModel}"/>
+            </TabItem>
+
+            <TabItem Header="Transcription" Foreground="{StaticResource TextPrimaryBrush}">
+                <!-- Using the new TranscriptionModelView -->
+                <views:LlmModelView DataContext="{Binding TranscriptionViewModel}"/>
+            </TabItem>
+
+            <TabItem Header="Prompts" Foreground="{StaticResource TextPrimaryBrush}">
+                <!-- Using the new PromptEditorView -->
+                <config:PromptEditorView DataContext="{Binding PromptViewModel}"/>
+            </TabItem>
+        </TabControl>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Save" Command="{Binding SaveCommand}" Width="80" Margin="0,0,5,0"/>
+            <Button Content="Close" Command="{Binding CancelCommand}" Width="80"/>
+        </StackPanel>
+    </Grid>
+</Window>

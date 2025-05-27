@@ -1,0 +1,241 @@
+﻿<Window x:Class="PySenti.Copilot.App.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Interview Assistant" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen" Icon="/Resources/interview.png"
+        Background="{StaticResource PrimaryBackgroundBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>            
+        </Grid.RowDefinitions>
+
+        <!-- Top Controls in a compact layout -->
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <RadioButton x:Name="InputRadio" Content="Mic" 
+                         IsChecked="{Binding IsInputSource, FallbackValue=True}" Margin="5,0"
+                         IsEnabled="{Binding IsInitialized, FallbackValue=False}"/>
+                <RadioButton x:Name="OutputRadio" Content="System" 
+                        IsChecked="{Binding IsOutputSource, FallbackValue=False}" Margin="5,0"
+                        IsEnabled="{Binding IsInitialized, FallbackValue=False}"/>
+            </StackPanel>
+            <ComboBox x:Name="DeviceComboBox" Width="150" Margin="5,0"
+                      ItemsSource="{Binding AudioDevices}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding SelectedAudioDevice}"
+                      IsEnabled="{Binding IsRecording, Converter={StaticResource InverseBoolConverter}, FallbackValue=False}"/>
+            <Button x:Name="RecordButton" Command="{Binding RecordCommand}"
+                    Width="80" Height="25" Margin="5,0"
+                    IsEnabled="{Binding CanRecord, FallbackValue=False}">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse x:Name="RecordIcon" Width="8" Height="8" 
+                            Fill="{Binding IsRecording, Converter={StaticResource RecordingColorConverter}, FallbackValue=Gray}" Margin="0,0,5,0"/>
+                    <TextBlock x:Name="RecordText" Text="{Binding RecordButtonText, FallbackValue=Record}"/>
+                </StackPanel>
+            </Button>            <TextBlock x:Name="TimerDisplay" Text="{Binding TimerDisplay, FallbackValue=00:00:00}" 
+                       FontFamily="Consolas" FontSize="14"
+                       VerticalAlignment="Center" Margin="5,0"/>
+            <Separator Margin="10,0" Width="1" Background="{StaticResource BorderBrush}"/>
+            <Separator Margin="10,0" Width="1" Background="{StaticResource BorderBrush}"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Monitor:" VerticalAlignment="Center" Margin="5,0"/>
+                <ComboBox x:Name="MonitorComboBox" Width="150" Margin="5,0"
+                         ItemsSource="{Binding Monitors, FallbackValue={x:Null}}"
+                         DisplayMemberPath="DeviceName"
+                         SelectedItem="{Binding SelectedMonitor}"
+                         IsEnabled="{Binding IsInitialized, FallbackValue=False}"/>
+                <Button x:Name="ScreenshotButton" Content="Take Screenshot" 
+                        Width="100" Height="25" Margin="5,0"
+                        Command="{Binding TakeScreenshotCommand}"
+                        IsEnabled="{Binding IsInitialized, FallbackValue=False}"/>
+                <Button x:Name="DeleteScreenshotButton" Content="Delete Screenshot" 
+                        Width="100" Height="25" Margin="5,0"
+                        Command="{Binding DeleteScreenshotCommand}"
+                        IsEnabled="{Binding HasScreenshot, FallbackValue=False}"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Prompt selection row -->
+        <DockPanel Grid.Row="1" LastChildFill="False" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Interview Prompt:" VerticalAlignment="Center" Margin="5,0"/>
+                <ComboBox x:Name="PromptComboBox" Width="200" Margin="5,0"
+                          ItemsSource="{Binding AvailablePrompts}"
+                          SelectedItem="{Binding SelectedPrompt}"
+                          DisplayMemberPath="Role"
+                          IsEnabled="{Binding IsInitialized, FallbackValue=False}"/>
+            </StackPanel>
+            <Button Content="Settings" 
+                    Width="80" Height="25" 
+                    Command="{Binding OpenConfigurationCommand}"
+                    ToolTip="Edit LLM and Transcription model settings"
+                    Margin="10,0,0,0"/>
+
+            <!-- Retry button for failed initialization -->
+            <Button Content="Retry Initialization" 
+                    HorizontalAlignment="Right"
+                    Width="120" Height="25"
+                    Command="{Binding InitializeCommand}"
+                    Visibility="{Binding IsInitialized, Converter={StaticResource InverseBoolConverter}, ConverterParameter=Visibility, FallbackValue=Hidden}"
+                    IsEnabled="{Binding IsInitializing, Converter={StaticResource InverseBoolConverter}, FallbackValue=True}"/>
+        </DockPanel>        <!--Content Grid-->
+        <Grid Grid.Row="2" Background="{StaticResource PrimaryBackgroundBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Left side - Text content-->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>                <GroupBox Grid.Row="0" Header="Transcription" Height="100"
+                          BorderBrush="{StaticResource BorderBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
+                            <TextBlock Text="Language:" VerticalAlignment="Center" Margin="5,0"/>
+                            <ComboBox x:Name="LanguageComboBox" Width="120" Margin="5,0"
+                                      ItemsSource="{Binding AvailableLanguages}"
+                                      SelectedItem="{Binding SelectedLanguage}"
+                                      IsEnabled="{Binding IsRecording, Converter={StaticResource InverseBoolConverter}, FallbackValue=False}"/>
+                            <TextBlock Text="Model:" VerticalAlignment="Center" Margin="5,0"/>
+                            <ComboBox x:Name="TranscriptionComboBox" Width="150" 
+                                      ItemsSource="{Binding AvailableTranscriptions, FallbackValue={x:Null}}"
+                                      SelectedItem="{Binding SelectedTranscription}"
+                                      IsEnabled="{Binding IsInitialized, FallbackValue=False}"
+                                      />
+                        </StackPanel>
+
+                        <TextBox x:Name="TranscriptionBox" Grid.Row="1"
+                                 Text="{Binding Transcription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=''}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 IsReadOnly="True"
+                                 Margin="0,0,0,0"
+                                 IsEnabled="{Binding IsInitialized, FallbackValue=False}"
+                                 VerticalAlignment="Stretch"/>
+                    </Grid>
+                </GroupBox>                <GroupBox Grid.Row="1" Header="Short Answer" Height="200" Margin="0,10,0,0"
+                          BorderBrush="{StaticResource BorderBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,5">
+                            <TextBlock Text="Model:" VerticalAlignment="Center" Margin="5,0"/>
+                            <ComboBox x:Name="ShortLlmComboBox" Width="150" Margin="0,0,0,5"
+                                  ItemsSource="{Binding AvailableLlms, FallbackValue={x:Null}}"
+                                  SelectedItem="{Binding SelectedShortLlm}"
+                                  IsEnabled="{Binding IsInitialized, FallbackValue=False}"
+                                  />
+                        </StackPanel>
+                        <TextBox x:Name="ShortAnswerBox" Grid.Row="1"
+                                 Text="{Binding ShortAnswer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=''}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 FontSize="20"
+                                 VerticalScrollBarVisibility="Auto"
+                                 IsReadOnly="True"
+                                 Margin="0,0,0,0"                                 
+                                 IsEnabled="{Binding IsInitialized, FallbackValue=False}"
+                                 VerticalAlignment="Stretch"/>
+                    </Grid>
+                </GroupBox>                <GroupBox Grid.Row="2" Header="Detailed Analysis" Margin="0,10,0,0"
+                          BorderBrush="{StaticResource BorderBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,5,0,5">
+                            <TextBlock Text="Model:" VerticalAlignment="Center" Margin="5,0"/>
+                            <ComboBox x:Name="LongLlmComboBox" Width="150" Margin="0,0,0,5"
+                                  ItemsSource="{Binding AvailableLlms, FallbackValue={x:Null}}"
+                                  SelectedItem="{Binding SelectedLongLlm}"
+                                  IsEnabled="{Binding IsInitialized, FallbackValue=False}" />
+                        </StackPanel>
+                        <TextBox x:Name="DetailedAnswerBox" Grid.Row="1"
+                                 Text="{Binding DetailedAnswer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=''}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 FontSize="16"
+                                 IsReadOnly="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,0"
+                                 IsEnabled="{Binding IsInitialized, FallbackValue=False}"
+                                 VerticalAlignment="Stretch"/>
+                    </Grid>
+                </GroupBox>
+            </Grid>            <!--Right side - Screenshot-->
+            <GroupBox Grid.Column="1" Header="Screenshot" Margin="10,0,0,0"
+                      BorderBrush="{StaticResource BorderBrush}">
+                <Image x:Name="ScreenshotImage" 
+                       Source="{Binding ScreenshotImage, FallbackValue={x:Null}}"
+                       Stretch="Uniform"
+                       RenderOptions.BitmapScalingMode="HighQuality"/>
+            </GroupBox>
+        </Grid>        <!-- Unified Status Bar at bottom -->
+        <Grid Grid.Row="3" Margin="0,5,0,0">
+            <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,5,0,0">
+                <DockPanel LastChildFill="True">                    <!-- Error icon - blinking when there's an error -->
+                    <TextBlock x:Name="ErrorIcon" 
+                               Text="⚠️" 
+                               FontSize="14"
+                               Foreground="{StaticResource ErrorBrush}"
+                               VerticalAlignment="Center"
+                               DockPanel.Dock="Left"
+                               Margin="5,0,5,0"
+                               Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <TextBlock.Triggers>
+                            <EventTrigger RoutedEvent="TextBlock.Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                            Storyboard.TargetProperty="Opacity"
+                                            From="1.0" To="0.3" Duration="0:0:0.7"
+                                            AutoReverse="True" RepeatBehavior="Forever" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </TextBlock.Triggers>
+                    </TextBlock>
+
+                    <!-- Status message text -->
+                    <TextBlock x:Name="StatusBarText" 
+                               Text="{Binding StatusText, FallbackValue=Ready}"
+                               VerticalAlignment="Center" 
+                               DockPanel.Dock="Left"
+                               Margin="0,0,0,0"/>
+
+                    <!-- Progress indicator (shown only during initialization or processing) -->
+                    <ProgressBar x:Name="StatusProgressBar" 
+                                 IsIndeterminate="{Binding IsProcessing}" 
+                                 Height="10" 
+                                 Width="100"
+                                 DockPanel.Dock="Right"
+                                 Margin="10,0"
+                                 Visibility="{Binding IsProcessing, Converter={StaticResource BooleanToVisibilityConverter}}"/>                    <!-- Initialization Status Display (replaces status text during initialization) -->
+                    <TextBlock Text="{Binding InitializationStatus}" 
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource AccentBrush}"
+                               DockPanel.Dock="Right"
+                               Margin="5,0"
+                               Visibility="{Binding IsInitializing, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

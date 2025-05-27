@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PySenti.Copilot.App", "PySenti.Copilot.App\PySenti.Copilot.App.csproj", "{B87C9B9A-2B0B-B5BD-B119-733D39A7965C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PySenti.Copilot", "PySenti.Copilot\PySenti.Copilot.csproj", "{9E3D29DE-0FB7-5306-58CD-7ED92615E17F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PySenti.Copilot.Tests", "PySenti.Copilot.Tests\PySenti.Copilot.Tests.csproj", "{2817D99C-3ADF-420B-8500-DD725A381DF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PySenti.Copilot.Windows", "PySenti.Copilot.Windows\PySenti.Copilot.Windows.csproj", "{47FC0E96-70C7-4150-B714-0B35F4F23E70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B87C9B9A-2B0B-B5BD-B119-733D39A7965C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87C9B9A-2B0B-B5BD-B119-733D39A7965C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87C9B9A-2B0B-B5BD-B119-733D39A7965C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87C9B9A-2B0B-B5BD-B119-733D39A7965C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E3D29DE-0FB7-5306-58CD-7ED92615E17F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E3D29DE-0FB7-5306-58CD-7ED92615E17F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E3D29DE-0FB7-5306-58CD-7ED92615E17F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E3D29DE-0FB7-5306-58CD-7ED92615E17F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2817D99C-3ADF-420B-8500-DD725A381DF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2817D99C-3ADF-420B-8500-DD725A381DF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2817D99C-3ADF-420B-8500-DD725A381DF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2817D99C-3ADF-420B-8500-DD725A381DF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47FC0E96-70C7-4150-B714-0B35F4F23E70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47FC0E96-70C7-4150-B714-0B35F4F23E70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47FC0E96-70C7-4150-B714-0B35F4F23E70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47FC0E96-70C7-4150-B714-0B35F4F23E70}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC25ED0A-1D3F-4E80-9925-187BDF837A5C}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,74 @@
+name: .NET CI
+
+on:
+  push:
+    paths:
+    - 'src/**'
+    - '.github/workflows/app.yml'
+
+env:
+  DOTNET_CORE_VERSION: '9.0.x'
+  MAJOR_VERSION: '0'
+  MINOR_VERSION: '1'
+
+jobs:
+  build_and_test: # Renamed job to reflect additional testing
+    runs-on: windows-latest # Changed to windows-latest for Windows build
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    - name: Calculate version
+      id: build_version
+      shell: pwsh
+      run: |
+        echo "Major version: ${{ env.MAJOR_VERSION }}"
+        echo "Minor version: ${{ env.MINOR_VERSION }}"
+        echo "Build number: $env:GITHUB_RUN_NUMBER"
+        
+        $NEW_VERSION="${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.$env:GITHUB_RUN_NUMBER"
+        echo "Calculated Version: $NEW_VERSION"
+        
+        echo "VERSION=$NEW_VERSION" >> $env:GITHUB_ENV
+        echo "::set-output name=version::$NEW_VERSION"
+        
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+
+    - name: Build
+      run: |
+        cd src
+        dotnet build -c Release --nologo /p:Version=${{ env.VERSION }}
+
+    - name: Test
+      run: |
+        cd src
+        dotnet test --no-restore --verbosity normal --nologo --collect:"XPlat Code Coverage" --results-directory ../TestResults/ --logger:trx
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/
+
+    - name: Publish as single file
+      run: |
+        cd src
+        dotnet publish .\PySenti.Copilot.App\PySenti.Copilot.App.csproj -c Release -r win-x64 /p:Version=${{ env.VERSION }}
+
+    - name: Upload release artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Copilot-v${{ env.VERSION }}
+        path: src\PySenti.Copilot.App\bin\Release\net9.0-windows\win-x64\publish\
+        
+    - name: Create tag
+      if: success() && github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git tag -a v${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
+        git push origin v${{ env.VERSION }}
