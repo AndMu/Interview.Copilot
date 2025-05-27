@@ -30,7 +30,7 @@ jobs:
         echo "Calculated Version: $NEW_VERSION"
         
         echo "VERSION=$NEW_VERSION" >> $env:GITHUB_ENV
-        echo "::set-output name=version::$NEW_VERSION"
+        echo "version=$NEW_VERSION" >> $env:GITHUB_OUTPUT
         
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
@@ -58,13 +58,16 @@ jobs:
       run: |
         cd src
         dotnet publish .\PySenti.Copilot.App\PySenti.Copilot.App.csproj -c Release -r win-x64 /p:Version=${{ env.VERSION }}
-
-    - name: Upload release artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Copilot-v${{ env.VERSION }}
-        path: src\PySenti.Copilot.App\bin\Release\net9.0-windows\win-x64\publish\
         
+    - name: Create release archive
+      shell: pwsh
+      run: |
+        $publishPath = "src\PySenti.Copilot.App\bin\Release\net9.0-windows\win-x64\publish"
+        $archiveName = "Copilot-v${{ env.VERSION }}.zip"
+        Compress-Archive -Path "$publishPath\*" -DestinationPath $archiveName
+        echo "ARCHIVE_NAME=$archiveName" >> $env:GITHUB_ENV
+        
+       
     - name: Create tag
       if: success() && github.ref == 'refs/heads/main'
       run: |
@@ -72,6 +75,8 @@ jobs:
         git config --local user.name "GitHub Action"
         git tag -a v${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
         git push origin v${{ env.VERSION }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Create GitHub Release
       if: success() && github.ref == 'refs/heads/main'
@@ -87,7 +92,7 @@ jobs:
           - Built from commit: ${{ github.sha }}
           
           ### Download
-          Download the `Copilot-v${{ env.VERSION }}-win-x64.zip` file below and extract it to run the application.
+          Download the `Copilot-v${{ env.VERSION }}.zip` file below and extract it to run the application.
           
           ### System Requirements
           - Windows x64
