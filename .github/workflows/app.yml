@@ -12,8 +12,8 @@ env:
   MINOR_VERSION: '1'
 
 jobs:
-  build_and_test: # Renamed job to reflect additional testing
-    runs-on: windows-latest # Changed to windows-latest for Windows build
+  build_and_test:
+    runs-on: windows-latest 
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -72,3 +72,30 @@ jobs:
         git config --local user.name "GitHub Action"
         git tag -a v${{ env.VERSION }} -m "Release version ${{ env.VERSION }}"
         git push origin v${{ env.VERSION }}
+        
+    - name: Create GitHub Release
+      if: success() && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ env.VERSION }}
+        name: Release v${{ env.VERSION }}
+        body: |
+          ## Release Notes for v${{ env.VERSION }}
+          
+          ### Changes
+          - Automated release from build #${{ github.run_number }}
+          - Built from commit: ${{ github.sha }}
+          
+          ### Download
+          Download the `Copilot-v${{ env.VERSION }}-win-x64.zip` file below and extract it to run the application.
+          
+          ### System Requirements
+          - Windows x64
+          - .NET 9.0 Runtime (included in single-file build)
+        files: |
+          ${{ env.ARCHIVE_NAME }}
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
