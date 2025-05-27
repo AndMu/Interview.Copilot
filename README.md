@@ -8,9 +8,9 @@ Interview Copilot is a Windows desktop application built with .NET 9.0 that assi
 
 ## Key Features
 
-- **Interview Preparation Tools**: Helps candidates prepare for technical interviews
+- **Interview Preparation Tools**: Helps candidates prepare for technical interviews*
 - **Get current screenshots**: Capture screenshots of the current screen for reference
-- **Multiple LLM models**: Possibility to get different responses from various language models using tailored prompts
+- **Multiple LLM models**: Possibility to get different responses from various language models using tailored prompts (Only **Azure OpenAI** is currently supported)) 
 
 ## Usage
 
